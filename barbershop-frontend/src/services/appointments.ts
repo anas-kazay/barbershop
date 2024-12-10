@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Appointment } from "../types/Appointment";
 
+const BACKEND_URL = process.env.BACKEND_URL || "";
+
 export const getAllAppointments = async () => {
   // Retrieve the token from localStorage
   const token = localStorage.getItem("token");
@@ -12,7 +14,7 @@ export const getAllAppointments = async () => {
 
   try {
     const response = await axios.get<Appointment[]>(
-      "http://localhost:5000/api/appointments",
+      BACKEND_URL + "/api/appointments",
       {
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +59,7 @@ export const createAppointment = async (appointmentData: Appointment) => {
 
   try {
     const response = await axios.post<Appointment>(
-      "http://localhost:5000/api/appointments/reserve",
+      BACKEND_URL + "/api/appointments/reserve",
       appointmentData,
       {
         headers: {
@@ -104,7 +106,7 @@ export const getAllUserAppointments = async (): Promise<Appointment[]> => {
 
   try {
     const response = await axios.get<Appointment[]>(
-      "http://localhost:5000/api/appointments/user/appointments",
+      BACKEND_URL + "/api/appointments/user/appointments",
       {
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +153,7 @@ export const getAllBarberAppointments = async (): Promise<Appointment[]> => {
 
   try {
     const response = await axios.get<Appointment[]>(
-      "http://localhost:5000/api/appointments/barber/appointments",
+      BACKEND_URL + "/api/appointments/barber/appointments",
       {
         headers: {
           "Content-Type": "application/json",
@@ -198,7 +200,7 @@ export const updateAppointmentStatus = async (
 
   try {
     const response = await axios.put<Appointment>(
-      `http://localhost:5000/api/appointments/${appointmentId}/status`,
+      BACKEND_URL + `/api/appointments/${appointmentId}/status`,
       { newStatus },
       {
         headers: {
@@ -244,7 +246,7 @@ export const getAppointmentsByBarberAndDay = async (
 
   try {
     const response = await axios.get<Appointment[]>(
-      `http://localhost:5000/api/appointments/${barberId}`,
+      BACKEND_URL + `/api/appointments/${barberId}`,
       {
         headers: {
           "Content-Type": "application/json",

@@ -1,12 +1,14 @@
 import axios from "axios";
 import { User } from "../types/User";
 
+const BACKEND_URL = process.env.BACKEND_URL || "";
+
 export async function loginUser(
   email: string,
   password: string
 ): Promise<boolean> {
   try {
-    const response = await axios.post("http://localhost:5000/api/users/login", {
+    const response = await axios.post(BACKEND_URL + "/api/users/login", {
       email,
       password,
     });
@@ -38,14 +40,11 @@ export async function registerUser(
   password: string
 ): Promise<boolean> {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/users/register",
-      {
-        name,
-        email,
-        password,
-      }
-    );
+    const response = await axios.post(BACKEND_URL + "/api/users/register", {
+      name,
+      email,
+      password,
+    });
 
     if (response.status === 200 || response.status === 201) {
       // Handle successful creation (201 Created)
@@ -72,14 +71,11 @@ export async function getUserData(): Promise<{
       throw new Error("No token found in localStorage. Please login first.");
     }
 
-    const response = await axios.get(
-      "http://localhost:5000/api/users/userData",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include token in Authorization header
-        },
-      }
-    );
+    const response = await axios.get(BACKEND_URL + "/api/users/userData", {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include token in Authorization header
+      },
+    });
 
     if (response.status === 200) {
       const user = response.data;

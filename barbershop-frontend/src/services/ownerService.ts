@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BACKEND_URL = process.env.BACKEND_URL || "";
+
 export async function createService(serviceData: {
   name: string;
   price: number;
@@ -54,7 +56,7 @@ export async function deleteService(serviceId: string) {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
     console.log(serviceId);
     const response = await axios.delete(
-      `http://localhost:5000/api/owner/services/${serviceId}`,
+      BACKEND_URL + `/api/owner/services/${serviceId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`, // Add the token in the Authorization header
@@ -74,7 +76,7 @@ export async function deleteUser(userId: string) {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
     console.log(userId);
     const response = await axios.delete(
-      `http://localhost:5000/api/owner/barbers/${userId}`,
+      BACKEND_URL + `/api/owner/barbers/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`, // Add the token in the Authorization header
@@ -97,7 +99,7 @@ export async function createBarber(barberData: object) {
     }
 
     const response = await axios.post(
-      "http://localhost:5000/api/owner/barbers",
+      BACKEND_URL + "/api/owner/barbers",
       barberData,
       {
         headers: {
@@ -125,7 +127,7 @@ export async function updateBarberSchedule(
       throw new Error("Missing authentication token");
     }
 
-    const url = `http://localhost:5000/api/owner/barbers/${barberId}/schedule`;
+    const url = BACKEND_URL + `/api/owner/barbers/${barberId}/schedule`;
 
     const response = await axios.put(url, scheduleData, {
       headers: {
