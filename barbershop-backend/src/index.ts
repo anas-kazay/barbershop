@@ -41,8 +41,18 @@ app.use("/api/services", serviceRoutes);
 // Vercel Serverless Function Handler
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://barbershop-one-wine.vercel.app",
+  ];
+
+  const origin = req.headers.origin ?? "";
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,OPTIONS,PATCH,DELETE,POST,PUT"
