@@ -1,4 +1,3 @@
-import { UpdateScheduleDTO } from "../dtos/updateScheduleDTO";
 import UserModel, { User } from "../models/User"; // Assuming you have a User model
 
 // Function to get all barbers
