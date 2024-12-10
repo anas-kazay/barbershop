@@ -92,10 +92,10 @@ export async function deleteUser(userId: string) {
 
 export async function createBarber(barberData: object) {
   try {
-    const token = localStorage.getItem("token"); // Retrieve token from localStorage
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      throw new Error("Missing authentication token"); // Handle missing token gracefully
+      throw new Error("Missing authentication token");
     }
 
     const response = await axios.post(

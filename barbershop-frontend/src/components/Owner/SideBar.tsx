@@ -1,17 +1,10 @@
 import React, { useState } from "react";
 import {
-  AdminPanelSettings,
   CalendarMonth,
-  Category,
   Dashboard,
-  EventNote,
-  Fastfood,
   Logout,
   Menu as MenuIcon,
   People,
-  Person,
-  ShopTwo,
-  ShoppingBag,
   ChevronLeft,
 } from "@mui/icons-material";
 import { Divider, Drawer, IconButton, useMediaQuery } from "@mui/material";

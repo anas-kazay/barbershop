@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getAllBarbers } from "../../services/barbers"; // Assuming the service is in a 'services' folder
 
 interface Barber {
@@ -10,7 +10,7 @@ interface Barber {
 function Barbers() {
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
 
   useEffect(() => {
     const fetchBarbers = async () => {

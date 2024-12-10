@@ -13,7 +13,7 @@ import {
   Chip,
   Avatar,
 } from "@mui/material";
-import { format, addDays, parseISO, setHours, setMinutes } from "date-fns";
+import { format, addDays, parseISO } from "date-fns";
 import {
   createAppointment,
   getAppointmentsByBarberAndDay,

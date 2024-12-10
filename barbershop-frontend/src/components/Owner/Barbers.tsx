@@ -162,7 +162,7 @@ const Barbers: React.FC = () => {
         ? barber.workingSchedule.map((schedule) => ({
             ...schedule, // Copy all properties from existing schedule
           }))
-        : daysOfWeek.map((day, index) => ({
+        : daysOfWeek.map((_day, index) => ({
             dayOfWeek: index,
             startTime: "",
             endTime: "",

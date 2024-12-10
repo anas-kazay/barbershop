@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Owner from "../components/Owner/Owner";
 import { Navbar } from "../components/Navbar/Navbar";

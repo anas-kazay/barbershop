@@ -5,7 +5,6 @@ import {
   modifyService,
 } from "../../services/ownerService"; // Adjust the import path based on your file structure
 import {
-  Card,
   CardContent,
   CardHeader,
   CardMedia,

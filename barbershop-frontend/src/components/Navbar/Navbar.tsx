@@ -1,7 +1,4 @@
-import { Avatar, Badge, IconButton } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { pink } from "@mui/material/colors";
+import { Avatar, IconButton } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
