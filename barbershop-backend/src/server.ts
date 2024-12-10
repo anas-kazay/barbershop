@@ -1,14 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import mongoose from "mongoose";
-import userRoutes from "./routes/userRoutes";
-import ownerRoutes from "./routes/ownerRoutes";
-import barberRoutes from "./routes/barberRoutes";
-import appointmentRoutes from "./routes/appointmentRoutes";
-import serviceRoutes from "./routes/serviceRoutes";
+
 import cors from "cors";
 import connectDB from "./config/db";
+import barberRoutes from "./routes/barberRoutes";
+import userRoutes from "./routes/userRoutes";
+import ownerRoutes from "./routes/ownerRoutes";
+import appointmentRoutes from "./routes/appointmentRoutes";
+import serviceRoutes from "./routes/serviceRoutes";
 
 dotenv.config();
 
@@ -38,7 +38,7 @@ app.use("/api/barbers", barberRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/services", serviceRoutes);
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// Export the handler function for Vercel
+export default (req: any, res: any) => {
+  app(req, res); // Forward the request to the Express app
+};
