@@ -23,6 +23,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const barbersData = await getAllBarbers();
+        console.log("Fetched barbers data:", barbersData);
         const servicesData = await getAllServices();
         setBarbers(barbersData);
         setServices(servicesData);

@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || "";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 export async function getAllBarbers() {
+  console.log("backend" + BACKEND_URL);
   try {
     const response = await axios.get(BACKEND_URL + "/api/barbers");
     return response.data;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User } from "../types/User";
 
-const BACKEND_URL = process.env.BACKEND_URL || "";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 export async function loginUser(
   email: string,
