@@ -14,7 +14,7 @@ import { Service } from "../../types/Service";
 import { getAllBarbers } from "../../services/barbers";
 import { getAllServices } from "../../services/serivces";
 import { Navbar } from "../Navbar/Navbar";
-
+import defaultAvatar from "./../../assets/default-avatar.png";
 const Home = () => {
   const [barbers, setBarbers] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -95,7 +95,7 @@ const Home = () => {
                   <CardMedia
                     component="img"
                     height="250"
-                    image={barber.profilePicture || "/default-avatar.png"}
+                    image={barber.profilePicture || defaultAvatar}
                     alt={barber.name}
                     className="h-64 w-64 object-cover rounded-full mx-auto mt-4"
                     sx={{

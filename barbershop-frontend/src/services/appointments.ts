@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Appointment } from "../types/Appointment";
 
-const BACKEND_URL = import.meta.env.BACKEND_URL || "";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 export const getAllAppointments = async () => {
   // Retrieve the token from localStorage
