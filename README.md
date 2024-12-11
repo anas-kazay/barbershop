@@ -31,7 +31,7 @@ Technologies Used & User Functionalities
 - Create and manage barbershop details (services, barbers).
 - Add or remove barbers from their barbershop.
 - Add, update, or delete services offered by the barbershop.
-- View all appointments.
+- View all appointments and modify their states.
 - Change the schedule of the barbers
 
 ---
