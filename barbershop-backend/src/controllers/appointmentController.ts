@@ -85,7 +85,7 @@ export const reserveAppointment = async (req: Request, res: Response) => {
 
     const requestedTime = new Date(time);
     const adjustedTime = new Date(requestedTime);
-    adjustedTime.setHours(requestedTime.getHours() - 1);
+    adjustedTime.setHours(requestedTime.getHours() + 1);
     const dayOfWeek = requestedTime.getDay();
     const requestedTimeString = adjustedTime.toTimeString().slice(0, 5); // HH:MM format
 
