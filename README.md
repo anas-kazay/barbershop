@@ -1,52 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barbershop App - Features</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
-      color: #333;
-    }
-    header {
-      background: #007bff;
-      color: white;
-      padding: 20px 10px;
-      text-align: center;
-    }
-    .container {
-      width: 80%;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    h1, h2 {
-      color: #007bff;
-    }
-    ul {
-      margin: 0;
-      padding: 0 20px;
-      list-style: none;
-    }
-    ul li {
-      margin-bottom: 10px;
-    }
-    footer {
-      background: #007bff;
-      color: white;
-      text-align: center;
-      padding: 10px 0;
-      margin-top: 20px;
-    }
-  </style>
-</head>
+
 <body>
   <header>
     <h1>Barbershop App</h1>
@@ -92,4 +44,3 @@
     <p>Barbershop App &copy; 2024</p>
   </footer>
 </body>
-</html>
