@@ -110,6 +110,19 @@ export const reserveAppointment = async (req: Request, res: Response) => {
         .json({ message: "Barber is not available at this time" });
     }
 
+    // Check for existing appointments at the same time
+    const existingAppointment = await AppointmentModel.findOne({
+      barberId,
+      time: requestedTime,
+      $or: [{ status: "pending" }, { status: "confirmed" }],
+    });
+
+    if (existingAppointment) {
+      return res.status(400).json({
+        message: "An appointment already exists at this time",
+      });
+    }
+
     // Fetch service names
     const services = await ServiceModel.find({ _id: { $in: serviceIds } });
     const serviceNames = services.map((service) => service.name);
