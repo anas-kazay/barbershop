@@ -220,6 +220,13 @@ const Barbers: React.FC = () => {
         // Alert if the selected endTime is before the startTime
         alert("End time cannot be before start time.");
         return; // Exit without updating
+      } else if (
+        field === "startTime" &&
+        currentSchedule.endTime &&
+        value > currentSchedule.endTime
+      ) {
+        alert("Start time cannot be after end time.");
+        return;
       }
 
       updatedSchedule[index] = updatedField;
