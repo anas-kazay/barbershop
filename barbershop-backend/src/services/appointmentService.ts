@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
 import AppointmentModel, { Appointment } from "../models/Appointement";
-import Jwt from "jsonwebtoken";
 
 export const getAllAppointments = async (): Promise<Appointment[]> => {
   try {

@@ -4,37 +4,35 @@ import ServiceModel, { Service } from "../models/Service";
 import UserModel, { User } from "../models/User";
 import { UserRole } from "../models/UserRole";
 import bcrypt from "bcryptjs";
-import { WorkingSchedule } from "./../models/WorkingSchedule";
 
+// Function to get all users
 export const getAllUsers = async (): Promise<User[]> => {
   try {
-    return await UserModel.find(); // Example using Mongoose or any ORM to fetch users
+    return await UserModel.find();
   } catch (error) {
     throw new Error("Error fetching users");
   }
 };
 
+// Function to get all barbers
 export const createBarber = async (userData: CreateUserDto): Promise<User> => {
   const { email, password, ...rest } = userData;
 
-  // Check if the barber already exists
   const existingBarber = await UserModel.findOne({ email });
   if (existingBarber) {
     throw new Error("Barber already exists");
   }
 
-  // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create an empty working schedule with all days off
   const emptySchedule = [];
   for (const day of [0, 1, 2, 3, 4, 5, 6]) {
-    // Iterate through available days
     emptySchedule.push({
       dayOfWeek: day,
       startTime: "00:00",
       endTime: "00:00",
-      isWorking: false, // Set all days to not working by default
+      isWorking: false,
     });
   }
 

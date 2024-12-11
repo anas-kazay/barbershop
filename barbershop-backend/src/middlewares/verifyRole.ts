@@ -2,9 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserRole } from "../models/UserRole";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "your_very_long_and_complex_random_secret_key_here_12345!@#$%";
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
 const verifyTokenAndRoles = (roles: UserRole[]) => {
   return async (
