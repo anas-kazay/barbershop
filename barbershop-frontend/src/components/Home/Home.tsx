@@ -1,20 +1,14 @@
 import { useState, useEffect } from "react";
-import {
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Container,
-} from "@mui/material";
+import { Typography, Button, Container } from "@mui/material";
 import { Link } from "react-router-dom";
 import { User } from "../../types/User";
 import { Service } from "../../types/Service";
 import { getAllBarbers } from "../../services/barbers";
 import { getAllServices } from "../../services/serivces";
 import { Navbar } from "../Navbar/Navbar";
-import defaultAvatar from "./../../assets/default-avatar.png";
+import { Barbers } from "./Barbers";
+import { Services } from "./Services";
+
 const Home = () => {
   const [barbers, setBarbers] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -74,78 +68,10 @@ const Home = () => {
         </div>
 
         {/* Barbers Section */}
-        <Container className="py-16">
-          <Typography
-            variant="h3"
-            className="text-center pb-12 font-bold text-[#2b98d3]"
-          >
-            Our Expert Barbers
-          </Typography>
-          <Grid container spacing={4}>
-            {barbers.map((barber) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                key={barber.id}
-                className="flex justify-center"
-              >
-                <Card className="hover:shadow-xl transition-shadow duration-300 w-64">
-                  <CardMedia
-                    component="img"
-                    height="250"
-                    image={barber.profilePicture || defaultAvatar}
-                    alt={barber.name}
-                    className="h-64 w-64 object-cover rounded-full mx-auto mt-4"
-                    sx={{
-                      width: "250px",
-                      height: "250px",
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                    }}
-                  />
-                  <CardContent className="text-center">
-                    <Typography variant="h6" className="font-semibold">
-                      {barber.name}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
+        <Barbers barbers={barbers} />
 
         {/* Services Section */}
-        <div className="bg-white py-16">
-          <Container>
-            <Typography
-              variant="h3"
-              className="text-center mb-12 pb-5 font-bold text-[#2b98d3]"
-            >
-              Our Services
-            </Typography>
-            <Grid container spacing={4}>
-              {services.map((service) => (
-                <Grid item xs={12} sm={6} md={4} key={service._id}>
-                  <Card className="hover:shadow-xl transition-shadow duration-300">
-                    <CardContent>
-                      <Typography variant="h6" className="mb-2 font-semibold">
-                        {service.name}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        Price: ${service.price}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        Duration: {service.duration} minutes
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </div>
+        <Services services={services} />
       </div>
     </>
   );

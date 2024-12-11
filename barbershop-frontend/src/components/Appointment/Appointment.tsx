@@ -45,6 +45,11 @@ const AppointmentForm: React.FC = () => {
   const [barbers, setBarbers] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     const fetchBarbers = async () => {
       try {
         const fetchedBarbers = await getAllBarbers();

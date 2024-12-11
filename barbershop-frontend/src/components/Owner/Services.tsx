@@ -7,7 +7,6 @@ import {
 import {
   CardContent,
   CardHeader,
-  CardMedia,
   Typography,
   Button,
   Dialog,
@@ -215,11 +214,6 @@ const Services: React.FC = () => {
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((service) => (
             <li key={service._id} className="rounded overflow-hidden shadow-md">
-              <CardMedia
-                className="h-48 bg-cover bg-center"
-                image="https://picsum.photos/id/237/200/140" // Placeholder image
-                title={service.name}
-              />
               <div className="p-4">
                 <CardHeader title={service.name} />
                 <CardContent>

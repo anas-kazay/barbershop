@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User } from "../types/User";
+import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
@@ -59,7 +60,9 @@ export async function registerUser(
   }
 }
 
-export async function getUserData(): Promise<{
+export async function getUserData(
+  navigate: ReturnType<typeof useNavigate>
+): Promise<{
   user: User;
   success: boolean;
 }> {
@@ -86,6 +89,9 @@ export async function getUserData(): Promise<{
     }
   } catch (error) {
     console.error("Error fetching user data:", error);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
     throw error; // Re-throw for handling in the calling code
   }
 }

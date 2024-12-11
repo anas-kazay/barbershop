@@ -39,9 +39,22 @@ const Barber = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUserString = localStorage.getItem("user") || "{}";
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     const fetchData = async () => {
       try {
-        const userDataResponse = await getUserData();
+        const user = JSON.parse(storedUserString);
+
+        // Check if the user role is not 'customer'
+        if (user.role !== "customer") {
+          navigate("/");
+          return;
+        }
+        const userDataResponse = await getUserData(navigate);
         if (userDataResponse.success) {
           setUserData(userDataResponse.user);
 
