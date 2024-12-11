@@ -6,7 +6,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 export const getAllAppointments = async () => {
   // Retrieve the token from localStorage
   const token = localStorage.getItem("token");
-  console.log(token);
   // Check if token exists
   if (!token) {
     throw new Error("No authentication token found");
@@ -97,7 +96,6 @@ export const createAppointment = async (appointmentData: Appointment) => {
 export const getAllUserAppointments = async (): Promise<Appointment[]> => {
   // Retrieve the token from localStorage
   const token = localStorage.getItem("token");
-  console.log(token);
 
   // Check if token exists
   if (!token) {
@@ -144,7 +142,6 @@ export const getAllUserAppointments = async (): Promise<Appointment[]> => {
 export const getAllBarberAppointments = async (): Promise<Appointment[]> => {
   // Retrieve the token from localStorage
   const token = localStorage.getItem("token");
-  console.log(token);
 
   // Check if token exists
   if (!token) {

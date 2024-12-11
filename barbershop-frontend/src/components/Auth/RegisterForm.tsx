@@ -11,6 +11,7 @@ import { Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/users";
 import { useState } from "react";
+import { Navbar } from "../Navbar/Navbar";
 
 const initialValues = {
   fullName: "",
@@ -39,76 +40,80 @@ const RegisterForm = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <Card
+    <>
+      <Navbar />
+      <Box
         sx={{
-          width: "400px",
-          p: 3,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "80vh",
         }}
       >
-        <CardContent>
-          <Typography variant="h5" className="text-center">
-            Register
-          </Typography>
-          {isSuccess && (
-            <Alert severity="success">Registration successful!</Alert>
-          )}
-          <Formik onSubmit={handleSubmit} initialValues={initialValues}>
-            <Form>
-              <Field
-                as={TextField}
-                name="fullName"
-                label="Full Name"
-                fullWidth
-                variant="outlined"
-                margin="normal"
-              />
-              <Field
-                as={TextField}
-                name="email"
-                label="Email"
-                fullWidth
-                variant="outlined"
-                margin="normal"
-              />
-              <Field
-                as={TextField}
-                name="password"
-                label="Password"
-                fullWidth
-                variant="outlined"
-                margin="normal"
-                type="password"
-              />
+        <Card
+          sx={{
+            width: "400px",
+            p: 3,
+            mt: 8,
+          }}
+        >
+          <CardContent>
+            <Typography variant="h5" className="text-center">
+              Register
+            </Typography>
+            {isSuccess && (
+              <Alert severity="success">Registration successful!</Alert>
+            )}
+            <Formik onSubmit={handleSubmit} initialValues={initialValues}>
+              <Form>
+                <Field
+                  as={TextField}
+                  name="fullName"
+                  label="Full Name"
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                />
+                <Field
+                  as={TextField}
+                  name="email"
+                  label="Email"
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                />
+                <Field
+                  as={TextField}
+                  name="password"
+                  label="Password"
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                  type="password"
+                />
 
-              <Button
-                sx={{ mt: 2, padding: "1rem" }}
-                fullWidth
-                type="submit"
-                variant="contained"
-                className="mt-5"
-                disabled={isSubmitting} // Disable button during submission
-              >
-                {isSubmitting ? "Registering..." : "Register"}
+                <Button
+                  sx={{ mt: 2, padding: "1rem" }}
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  className="mt-5"
+                  disabled={isSubmitting} // Disable button during submission
+                >
+                  {isSubmitting ? "Registering..." : "Register"}
+                </Button>
+              </Form>
+            </Formik>
+            <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+              If you have an account?
+              <Button size="small" onClick={() => navigate("/login")}>
+                Login
               </Button>
-            </Form>
-          </Formik>
-          <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-            If you have an account?
-            <Button size="small" onClick={() => navigate("/login")}>
-              Login
-            </Button>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
   );
 };
 

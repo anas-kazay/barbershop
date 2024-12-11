@@ -54,7 +54,6 @@ export async function modifyService(
 export async function deleteService(serviceId: string) {
   try {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
-    console.log(serviceId);
     const response = await axios.delete(
       BACKEND_URL + `/api/owner/services/${serviceId}`,
       {
@@ -74,7 +73,6 @@ export async function deleteService(serviceId: string) {
 export async function deleteUser(userId: string) {
   try {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
-    console.log(userId);
     const response = await axios.delete(
       BACKEND_URL + `/api/owner/barbers/${userId}`,
       {

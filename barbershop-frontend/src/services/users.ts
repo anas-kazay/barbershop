@@ -15,13 +15,10 @@ export async function loginUser(
     });
 
     if (response.status === 200) {
-      console.log(response.data);
       const { token, user } = response.data; // Extract token and user from the response
 
       // Store token and user in local storage
       localStorage.setItem("token", token);
-      console.log(token);
-      console.log(user);
       localStorage.setItem("user", JSON.stringify(user)); // Store user as a JSON string
 
       console.log("Authentication successful");
@@ -49,7 +46,6 @@ export async function registerUser(
 
     if (response.status === 200 || response.status === 201) {
       // Handle successful creation (201 Created)
-      console.log(response.data); // You might receive a confirmation message
       return true;
     } else {
       throw new Error("Registration failed");
@@ -82,7 +78,6 @@ export async function getUserData(
 
     if (response.status === 200) {
       const user = response.data;
-      console.log("User data retrieved:", user);
       return { user, success: true };
     } else {
       throw new Error("Failed to retrieve user data");

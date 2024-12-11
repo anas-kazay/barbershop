@@ -175,7 +175,6 @@ const Barbers: React.FC = () => {
   const handleModifyScheduleSubmit = async () => {
     if (selectedBarber) {
       try {
-        console.log(modifiedSchedule);
         await updateBarberSchedule(selectedBarber.id, {
           workingSchedule: modifiedSchedule,
         });
