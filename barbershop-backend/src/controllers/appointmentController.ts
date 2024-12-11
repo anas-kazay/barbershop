@@ -14,6 +14,7 @@ import { UserRole } from "../models/UserRole";
 import jwt from "jsonwebtoken";
 import ServiceModel from "../models/Service";
 import dotenv from "dotenv";
+import moment from "moment-timezone";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "";
@@ -52,6 +53,7 @@ export const getAllAppointmentsController = async (
 
 export const reserveAppointment = async (req: Request, res: Response) => {
   try {
+    // Destructure and validate input
     const {
       userId,
       barberId,
@@ -63,86 +65,143 @@ export const reserveAppointment = async (req: Request, res: Response) => {
       status = "pending",
     } = req.body as ReserveAppointmentDTO;
 
-    const user = await UserModel.findById(userId);
-    const barber = await UserModel.findById(barberId);
+    // Validate required fields
+    if (
+      !userId ||
+      !barberId ||
+      !serviceIds?.length ||
+      !time ||
+      !totalPrice ||
+      !totalDuration
+    ) {
+      return res.status(400).json({
+        message: "Missing required appointment details",
+      });
+    }
 
+    // Fetch user and barber with error handling
+    const [user, barber, services] = await Promise.all([
+      UserModel.findById(userId),
+      UserModel.findById(barberId),
+      ServiceModel.find({ _id: { $in: serviceIds } }),
+    ]);
+
+    // Validate user
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const customerName = user.name;
 
+    // Validate barber
     if (!barber) {
       return res.status(404).json({ message: "Barber not found" });
     }
-    const barberName = barber.name;
 
-    // Check if the barber has a complete working schedule
+    // Validate barber's working schedule
     if (!barber.workingSchedule || barber.workingSchedule.length !== 7) {
       return res.status(400).json({
         message: "Barber's working schedule is not completely defined",
       });
     }
 
-    const requestedTime = new Date(time);
-    const dayOfWeek = requestedTime.getDay();
-    const requestedTimeString = requestedTime.toTimeString().slice(0, 5); // HH:MM format
+    // Validate services
+    if (services.length !== serviceIds.length) {
+      return res
+        .status(404)
+        .json({ message: "One or more services not found" });
+    }
 
-    // Find the schedule for the specific day
+    // Parse and validate appointment time
+    const appointmentMoment = moment(time);
+    const dayOfWeek = appointmentMoment.day();
+
+    // Find schedule for the specific day
     const scheduleForDay = barber.workingSchedule.find(
       (schedule: WorkingSchedule) => schedule.dayOfWeek === dayOfWeek
     );
 
-    // Check if the barber is working on this day
+    // Check if barber works on this day
     if (!scheduleForDay || !scheduleForDay.isWorking) {
-      return res
-        .status(400)
-        .json({ message: "Barber is not working on this day" });
+      return res.status(400).json({
+        message: "Barber is not working on this day",
+      });
     }
 
-    const { startTime, endTime } = scheduleForDay;
+    // Validate time against barber's working hours
+    const startMoment = moment(time).set({
+      hour: parseInt(scheduleForDay.startTime.split(":")[0]),
+      minute: parseInt(scheduleForDay.startTime.split(":")[1]),
+    });
 
-    // Check if the requested time is within the working hours
-    if (requestedTimeString < startTime || requestedTimeString >= endTime) {
-      return res
-        .status(400)
-        .json({ message: "Barber is not available at this time" });
+    const endMoment = moment(time).set({
+      hour: parseInt(scheduleForDay.endTime.split(":")[0]),
+      minute: parseInt(scheduleForDay.endTime.split(":")[1]),
+    });
+
+    // Check if appointment time is within working hours
+    if (!appointmentMoment.isBetween(startMoment, endMoment, null, "[)")) {
+      return res.status(400).json({
+        message: "Barber is not available at this time",
+      });
     }
 
-    // Fetch service names
-    const services = await ServiceModel.find({ _id: { $in: serviceIds } });
-    const serviceNames = services.map((service) => service.name);
+    // Check for conflicting appointments
+    const conflictingAppointment = await AppointmentModel.findOne({
+      barberId,
+      time: {
+        $gte: appointmentMoment.startOf("hour").toISOString(),
+        $lt: appointmentMoment.endOf("hour").toISOString(),
+      },
+      status: { $ne: "cancelled" },
+    });
 
+    if (conflictingAppointment) {
+      return res.status(400).json({
+        message: "This time slot is already booked",
+      });
+    }
+
+    // Prepare appointment data
     const appointment = new AppointmentModel({
       userId,
       barberId,
       serviceIds,
-      serviceNames,
+      serviceNames: services.map((service) => service.name),
       time,
       status,
       comment,
       totalPrice,
       totalDuration,
-      customerName,
-      barberName,
+      customerName: user.name,
+      barberName: barber.name,
     });
 
-    // Save the appointment to the database
+    // Save appointment
     await appointment.save();
 
-    // Return the created appointment
+    // Return created appointment
     res.status(201).json(appointment);
   } catch (error) {
+    // Comprehensive error handling
     console.error("Error reserving appointment:", error);
 
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).json({
         message: "Validation error",
-        details: error.errors,
+        details: Object.values(error.errors).map((err) => err.message),
       });
     }
 
+    // Handle potential database connection errors
+    if (error instanceof mongoose.Error) {
+      return res.status(500).json({
+        message: "Database error",
+        error: error.message,
+      });
+    }
+
+    // Generic error response
     res.status(500).json({
-      message: "Error reserving appointment",
+      message: "Unexpected error occurred while reserving appointment",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
