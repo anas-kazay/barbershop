@@ -1,9 +1,7 @@
 
-<body>
-  <header>
+
     <h1>Barbershop App</h1>
     <p>Technologies Used & User Functionalities</p>
-  </header>
 
     <h2>Technologies Used</h2>
     <ul>
