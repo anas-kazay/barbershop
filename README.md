@@ -4,7 +4,7 @@
     <h1>Barbershop App</h1>
     <p>Technologies Used & User Functionalities</p>
   </header>
-  <div class="container">
+  <div>
     <h2>Technologies Used</h2>
     <ul>
       <li>Frontend: React.js, TypeScript</li>
