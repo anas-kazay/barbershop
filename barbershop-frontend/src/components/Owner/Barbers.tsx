@@ -202,18 +202,29 @@ const Barbers: React.FC = () => {
     value: string
   ) => {
     const updatedSchedule = [...modifiedSchedule];
-    // Update isWorking based on the button click (no direct use of handleScheduleChange)
+
     if (field === "isWorking") {
       updatedSchedule[index] = {
         ...updatedSchedule[index],
         isWorking: value === "true", // Convert string value to boolean
       };
     } else {
-      updatedSchedule[index] = {
-        ...updatedSchedule[index],
-        [field]: value,
-      };
+      const currentSchedule = updatedSchedule[index];
+      const updatedField = { ...currentSchedule, [field]: value };
+
+      if (
+        field === "endTime" &&
+        currentSchedule.startTime &&
+        value < currentSchedule.startTime
+      ) {
+        // Alert if the selected endTime is before the startTime
+        alert("End time cannot be before start time.");
+        return; // Exit without updating
+      }
+
+      updatedSchedule[index] = updatedField;
     }
+
     setModifiedSchedule(updatedSchedule);
   };
 

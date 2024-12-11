@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Box, Button, Grid, Typography, Chip } from "@mui/material";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, addMinutes } from "date-fns";
 import { User } from "../../types/User";
 import { Service } from "../../types/Service";
 import { Appointment } from "../../types/Appointment";
@@ -9,6 +9,7 @@ import { getAppointmentsByBarberAndDay } from "../../services/appointments";
 interface TimeSlotSelectionProps {
   barbers: User[];
   services: Service[];
+  selectedServiceIds: string[];
   selectedBarberId: string;
   selectedDate: string;
   onTimeSelect: (time: string) => void;
@@ -16,6 +17,7 @@ interface TimeSlotSelectionProps {
 
 export const TimeSlotSelection: React.FC<TimeSlotSelectionProps> = ({
   barbers,
+  selectedServiceIds,
   services,
   selectedBarberId,
   selectedDate,
@@ -53,6 +55,11 @@ export const TimeSlotSelection: React.FC<TimeSlotSelectionProps> = ({
         (schedule) => schedule.dayOfWeek === selectedFullDate.getDay()
       ) ?? null;
 
+    // Calculate total duration of selected services
+    const totalServiceDuration = services
+      .filter((service) => selectedServiceIds.includes(service._id))
+      .reduce((sum, service) => sum + service.duration, 0);
+
     if (!daySchedule) {
       console.error("No schedule found for the selected day");
       return [];
@@ -70,6 +77,7 @@ export const TimeSlotSelection: React.FC<TimeSlotSelectionProps> = ({
     const endTime = new Date(selectedFullDate);
     endTime.setHours(endHour, endMinute, 0, 0);
 
+    // Generate 30-minute slots
     while (currentTime < endTime) {
       generatedSlots.push(format(currentTime, "HH:mm"));
       currentTime = new Date(currentTime.getTime() + 30 * 60000);
@@ -77,16 +85,17 @@ export const TimeSlotSelection: React.FC<TimeSlotSelectionProps> = ({
 
     const blockedSlots = new Set<string>();
 
+    // Block slots based on existing appointments and selected services duration
     bookedAppointments.forEach((appointment) => {
       const appointmentTime = parseISO(appointment.time);
       const appointmentTimeString = format(appointmentTime, "HH:mm");
 
       const serviceIds = appointment.serviceIds;
-      const totalDuration = services
+      const appointmentTotalDuration = services
         .filter((service) => serviceIds.includes(service._id))
         .reduce((sum, service) => sum + service.duration, 0);
 
-      const slotsNeeded = Math.ceil(totalDuration / 30);
+      const slotsNeeded = Math.ceil(appointmentTotalDuration / 30);
       const startIndex = generatedSlots.indexOf(appointmentTimeString);
 
       for (let i = 0; i < slotsNeeded; i++) {
@@ -97,8 +106,46 @@ export const TimeSlotSelection: React.FC<TimeSlotSelectionProps> = ({
       }
     });
 
-    return generatedSlots.filter((timeSlot) => !blockedSlots.has(timeSlot));
-  }, [selectedBarberId, selectedDate, bookedAppointments, services]);
+    // Filter available slots, considering selected services duration
+    return generatedSlots.filter((timeSlot, index) => {
+      // Check if the slot is already blocked
+      if (blockedSlots.has(timeSlot)) return false;
+
+      // Convert timeSlot to a Date
+      const slotTime = new Date(selectedFullDate);
+      const [hours, minutes] = timeSlot.split(":").map(Number);
+      slotTime.setHours(hours, minutes, 0, 0);
+
+      // Calculate the end time of the potential appointment
+      const appointmentEndTime = addMinutes(slotTime, totalServiceDuration);
+
+      // Check if the appointment would extend beyond working hours
+      const endWorkTime = new Date(selectedFullDate);
+      const [endHour, endMinute] = daySchedule.endTime.split(":").map(Number);
+      endWorkTime.setHours(endHour, endMinute, 0, 0);
+
+      // Check if any slots needed for the appointment are blocked
+      const slotsNeededForAppointment = Math.ceil(totalServiceDuration / 30);
+      for (let i = 0; i < slotsNeededForAppointment; i++) {
+        const nextSlotIndex = index + i;
+        if (
+          nextSlotIndex >= generatedSlots.length ||
+          blockedSlots.has(generatedSlots[nextSlotIndex])
+        ) {
+          return false;
+        }
+      }
+
+      // Ensure the appointment end time doesn't exceed working hours
+      return appointmentEndTime <= endWorkTime;
+    });
+  }, [
+    selectedBarberId,
+    selectedDate,
+    bookedAppointments,
+    services,
+    selectedServiceIds,
+  ]);
 
   const handleTimeSelect = () => {
     if (selectedTime) {

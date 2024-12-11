@@ -11,7 +11,7 @@ export async function createService(serviceData: {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
     const response = await axios.post(
-      "http://localhost:5000/api/owner/services",
+      BACKEND_URL + "/api/owner/services",
       serviceData,
       {
         headers: {
@@ -35,7 +35,7 @@ export async function modifyService(
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
     const response = await axios.put(
-      `http://localhost:5000/api/owner/services/${serviceId}`,
+      BACKEND_URL + `/api/owner/services/${serviceId}`,
       updatedData,
       {
         headers: {
