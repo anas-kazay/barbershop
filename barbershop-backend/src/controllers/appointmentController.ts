@@ -14,7 +14,6 @@ import { UserRole } from "../models/UserRole";
 import jwt from "jsonwebtoken";
 import ServiceModel from "../models/Service";
 import dotenv from "dotenv";
-import moment from "moment-timezone";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "";
@@ -53,7 +52,6 @@ export const getAllAppointmentsController = async (
 
 export const reserveAppointment = async (req: Request, res: Response) => {
   try {
-    // Destructure and validate input
     const {
       userId,
       barberId,
@@ -65,143 +63,88 @@ export const reserveAppointment = async (req: Request, res: Response) => {
       status = "pending",
     } = req.body as ReserveAppointmentDTO;
 
-    // Validate required fields
-    if (
-      !userId ||
-      !barberId ||
-      !serviceIds?.length ||
-      !time ||
-      !totalPrice ||
-      !totalDuration
-    ) {
-      return res.status(400).json({
-        message: "Missing required appointment details",
-      });
-    }
+    const user = await UserModel.findById(userId);
+    const barber = await UserModel.findById(barberId);
 
-    // Fetch user and barber with error handling
-    const [user, barber, services] = await Promise.all([
-      UserModel.findById(userId),
-      UserModel.findById(barberId),
-      ServiceModel.find({ _id: { $in: serviceIds } }),
-    ]);
-
-    // Validate user
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const customerName = user.name;
 
-    // Validate barber
     if (!barber) {
       return res.status(404).json({ message: "Barber not found" });
     }
+    const barberName = barber.name;
 
-    // Validate barber's working schedule
+    // Check if the barber has a complete working schedule
     if (!barber.workingSchedule || barber.workingSchedule.length !== 7) {
       return res.status(400).json({
         message: "Barber's working schedule is not completely defined",
       });
     }
 
-    // Validate services
-    if (services.length !== serviceIds.length) {
-      return res
-        .status(404)
-        .json({ message: "One or more services not found" });
-    }
+    const requestedTime = new Date(time);
+    const adjustedTime = new Date(requestedTime);
+    adjustedTime.setHours(requestedTime.getHours() - 1);
+    const dayOfWeek = requestedTime.getDay();
+    const requestedTimeString = adjustedTime.toTimeString().slice(0, 5); // HH:MM format
 
-    // Parse and validate appointment time
-    const appointmentMoment = moment(time);
-    const dayOfWeek = appointmentMoment.day();
-
-    // Find schedule for the specific day
+    // Find the schedule for the specific day
     const scheduleForDay = barber.workingSchedule.find(
       (schedule: WorkingSchedule) => schedule.dayOfWeek === dayOfWeek
     );
 
-    // Check if barber works on this day
+    // Check if the barber is working on this day
     if (!scheduleForDay || !scheduleForDay.isWorking) {
-      return res.status(400).json({
-        message: "Barber is not working on this day",
-      });
+      return res
+        .status(400)
+        .json({ message: "Barber is not working on this day" });
     }
 
-    // Validate time against barber's working hours
-    const startMoment = moment(time).set({
-      hour: parseInt(scheduleForDay.startTime.split(":")[0]),
-      minute: parseInt(scheduleForDay.startTime.split(":")[1]),
-    });
+    const { startTime, endTime } = scheduleForDay;
 
-    const endMoment = moment(time).set({
-      hour: parseInt(scheduleForDay.endTime.split(":")[0]),
-      minute: parseInt(scheduleForDay.endTime.split(":")[1]),
-    });
-
-    // Check if appointment time is within working hours
-    if (!appointmentMoment.isBetween(startMoment, endMoment, null, "[)")) {
-      return res.status(400).json({
-        message: "Barber is not available at this time",
-      });
+    // Check if the requested time is within the working hours
+    if (requestedTimeString < startTime || requestedTimeString >= endTime) {
+      return res
+        .status(400)
+        .json({ message: "Barber is not available at this time" });
     }
 
-    // Check for conflicting appointments
-    const conflictingAppointment = await AppointmentModel.findOne({
-      barberId,
-      time: {
-        $gte: appointmentMoment.startOf("hour").toISOString(),
-        $lt: appointmentMoment.endOf("hour").toISOString(),
-      },
-      status: { $ne: "cancelled" },
-    });
+    // Fetch service names
+    const services = await ServiceModel.find({ _id: { $in: serviceIds } });
+    const serviceNames = services.map((service) => service.name);
 
-    if (conflictingAppointment) {
-      return res.status(400).json({
-        message: "This time slot is already booked",
-      });
-    }
-
-    // Prepare appointment data
     const appointment = new AppointmentModel({
       userId,
       barberId,
       serviceIds,
-      serviceNames: services.map((service) => service.name),
+      serviceNames,
       time,
       status,
       comment,
       totalPrice,
       totalDuration,
-      customerName: user.name,
-      barberName: barber.name,
+      customerName,
+      barberName,
     });
 
-    // Save appointment
+    // Save the appointment to the database
     await appointment.save();
 
-    // Return created appointment
+    // Return the created appointment
     res.status(201).json(appointment);
   } catch (error) {
-    // Comprehensive error handling
     console.error("Error reserving appointment:", error);
 
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).json({
         message: "Validation error",
-        details: Object.values(error.errors).map((err) => err.message),
+        details: error.errors,
       });
     }
 
-    // Handle potential database connection errors
-    if (error instanceof mongoose.Error) {
-      return res.status(500).json({
-        message: "Database error",
-        error: error.message,
-      });
-    }
-
-    // Generic error response
     res.status(500).json({
-      message: "Unexpected error occurred while reserving appointment",
+      message: "Error reserving appointment",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
