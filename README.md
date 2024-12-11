@@ -4,7 +4,7 @@
     <h1>Barbershop App</h1>
     <p>Technologies Used & User Functionalities</p>
   </header>
-  <div>
+
     <h2>Technologies Used</h2>
     <ul>
       <li>Frontend: React.js, TypeScript</li>
@@ -39,7 +39,6 @@
       <li>View all appointments.</li>
       <li>Change the schedule of the barbers</li>
     </ul>
-  </div>
   <footer>
     <p>Barbershop App &copy; 2024</p>
   </footer>
