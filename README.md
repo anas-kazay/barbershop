@@ -2,7 +2,7 @@
 
 Technologies Used & User Functionalities
 
-## To login as an admin
+## To login as a barber owner
 - email : admin@gmail.com
 - password : admin
 
