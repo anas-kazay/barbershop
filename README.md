@@ -2,6 +2,10 @@
 
 Technologies Used & User Functionalities
 
+## To login as an admin
+email : admin
+password : admin
+
 ## Technologies Used
 
 - Frontend: React.js, TypeScript
