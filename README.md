@@ -3,8 +3,8 @@
 Technologies Used & User Functionalities
 
 ## To login as an admin
-email : admin
-password : admin
+- email : admin@gmail.com
+- password : admin
 
 ## Technologies Used
 
